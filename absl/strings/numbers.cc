@@ -137,9 +137,9 @@ bool SimpleAtob(absl::string_view str, bool* out) {
 namespace {
 
 // Used to optimize printing a decimal number's final digit.
-const char one_ASCII_final_digits[10][2] {
-  {'0', 0}, {'1', 0}, {'2', 0}, {'3', 0}, {'4', 0},
-  {'5', 0}, {'6', 0}, {'7', 0}, {'8', 0}, {'9', 0},
+const char one_ASCII_final_digits[10][2]{
+    {'0', 0}, {'1', 0}, {'2', 0}, {'3', 0}, {'4', 0},
+    {'5', 0}, {'6', 0}, {'7', 0}, {'8', 0}, {'9', 0},
 };
 
 }  // namespace
@@ -172,7 +172,7 @@ char* numbers_internal::FastIntToBuffer(uint32_t i, char* buffer) {
     i -= digits * 100;
     PutTwoDigits(digits, buffer);
     buffer += 2;
- lt100:
+  lt100:
     digits = i;
     PutTwoDigits(digits, buffer);
     buffer += 2;
@@ -403,7 +403,7 @@ static ExpDigits SplitToSix(const double value) {
   // Since we'd like to know if the fractional part of d is close to a half,
   // we multiply it by 65536 and see if the fractional part is close to 32768.
   // (The number doesn't have to be a power of two,but powers of two are faster)
-  uint64_t d64k = d * 65536;
+  uint64_t d64k = static_cast<uint64_t>(d * 65536);
   int dddddd;  // A 6-digit decimal integer.
   if ((d64k % 65536) == 32767 || (d64k % 65536) == 32768) {
     // OK, it's fairly likely that precision was lost above, which is
@@ -417,7 +417,8 @@ static ExpDigits SplitToSix(const double value) {
     // value we're representing, of course, is M.mmm... * 2^exp2.
     int exp2;
     double m = std::frexp(value, &exp2);
-    uint64_t mantissa = m * (32768.0 * 65536.0 * 65536.0 * 65536.0);
+    uint64_t mantissa =
+        static_cast<uint64_t>(m * (32768.0 * 65536.0 * 65536.0 * 65536.0));
     // std::frexp returns an m value in the range [0.5, 1.0), however we
     // can't multiply it by 2^64 and convert to an integer because some FPUs
     // throw an exception when converting an number higher than 2^63 into an
@@ -757,7 +758,7 @@ struct LookupTables {
 //
 // uint128& operator/=(uint128) is not constexpr, so hardcode the resulting
 // array to avoid a static initializer.
-template<>
+template <>
 const uint128 LookupTables<uint128>::kVmaxOverBase[] = {
     0,
     0,
@@ -809,7 +810,7 @@ const uint128 LookupTables<uint128>::kVmaxOverBase[] = {
 //
 // int128& operator/=(int128) is not constexpr, so hardcode the resulting array
 // to avoid a static initializer.
-template<>
+template <>
 const int128 LookupTables<int128>::kVmaxOverBase[] = {
     0,
     0,
@@ -862,7 +863,7 @@ const int128 LookupTables<int128>::kVmaxOverBase[] = {
 //
 // int128& operator/=(int128) is not constexpr, so hardcode the resulting array
 // to avoid a static initializer.
-template<>
+template <>
 const int128 LookupTables<int128>::kVminOverBase[] = {
     0,
     0,
@@ -1024,8 +1025,7 @@ inline bool safe_uint_internal(absl::string_view text, IntType* value_p,
 namespace numbers_internal {
 
 // Digit conversion.
-ABSL_CONST_INIT ABSL_DLL const char kHexChar[] =
-    "0123456789abcdef";
+ABSL_CONST_INIT ABSL_DLL const char kHexChar[] = "0123456789abcdef";
 
 ABSL_CONST_INIT ABSL_DLL const char kHexTable[513] =
     "000102030405060708090a0b0c0d0e0f"
